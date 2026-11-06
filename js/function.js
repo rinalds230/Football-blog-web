@@ -1,194 +1,196 @@
-//SEARCH FUNCTION 
-const pages = [
-  { name: "About", url: "about.php" },
-  { name: "Bundesliga", url: "bundesliga.php" },
-  { name: "Contacts", url: "contacts.php" },
-  { name: "Home", url: "home.php" },
-  { name: "LaLiga", url: "laliga.php" },
-  { name: "Ligue 1", url: "ligue.php" },
-  { name: "News", url: "news.php" },
-  { name: "Premier League", url: "premier.php" },
-  { name: "Serie A", url: "seria.php" },
-  { name: "Messages", url: "messages.php" }
+// ===== SEARCH =====
+const PAGES = [
+  { name: "Home", url: "home.php", hint: "Start page" },
+  { name: "News", url: "news.php", hint: "Latest stories" },
+  { name: "Premier League", url: "premier.php", hint: "England" },
+  { name: "LaLiga", url: "laliga.php", hint: "Spain" },
+  { name: "Serie A", url: "seria.php", hint: "Italy" },
+  { name: "Bundesliga", url: "bundesliga.php", hint: "Germany" },
+  { name: "Ligue 1", url: "ligue.php", hint: "France" },
+  { name: "About", url: "about.php", hint: "About Footy" },
+  { name: "Contacts", url: "contacts.php", hint: "Get in touch" },
+  { name: "Messages", url: "messages.php", hint: "Contact inbox" },
 ];
 
-function searchPages() {
-  const input = document.getElementById("searchInput").value.toLowerCase();
-  const resultsContainer = document.getElementById("searchResults");
-  resultsContainer.innerHTML = "";
-
-  if (!input) return;
-
-  let results = pages.filter(page => page.name.toLowerCase().startsWith(input));
-  results.sort((a, b) => a.name.localeCompare(b.name));
-
-  if (results.length === 0) {
-    resultsContainer.innerHTML = "<p>No results found</p>";
-    return;
-  }
-
-  results.forEach(page => {
-    const div = document.createElement("div");
-    div.className = "result-item";
-    div.innerHTML = `<a href="${page.url}">${page.name}</a>`;
-    resultsContainer.appendChild(div);
-  });
-}
-
-// Close search results when clicking outside
-window.addEventListener("click", function(event) {
-  const searchContainer = document.querySelector(".search");
-  const resultsContainer = document.getElementById("searchResults");
-  if (!searchContainer.contains(event.target)) {
-    resultsContainer.innerHTML = "";
-  }
-});
-
-// DROPDOWN TOGGLE 
-function toggleDropdown() {
-  document.getElementById("myDropdown").classList.toggle("show");
-}
-
-window.addEventListener("click", function(event) {
-  if (!event.target.matches('.dropbtn')) {
-    const dropdowns = document.getElementsByClassName("dropdown-content");
-    for (let i = 0; i < dropdowns.length; i++) {
-      dropdowns[i].classList.remove('show');
-    }
-  }
-});
-
-// NEWS FETCH
-function fetchNews() {
-  const newsElement = document.getElementById("news1");
-  const loadingElement = document.getElementById("loading");
-  if (!newsElement || !loadingElement) return;
-
-  fetch("news1.php")
-    .then(res => res.json())
-    .then(articles => {
-      newsElement.innerHTML = '';
-      if (!articles || articles.length === 0) {
-        newsElement.innerHTML = "<p>No recent football news found.</p>";
-        return;
-      }
-
-      articles.forEach(article => {
-        const articleDiv = document.createElement("div");
-        articleDiv.className = "article";
-
-        const imageURL = article.image || "https://via.placeholder.com/200";
-        articleDiv.innerHTML = `
-          <div class="article-content">
-            <img src="${imageURL}" alt="News image" />
-            <h3 class="headline"><a href="${article.link}" target="_blank">${article.title || "News"}</a></h3>
-            <p class="description">${article.description || ""}</p>
-          </div>
-        `;
-        newsElement.appendChild(articleDiv);
-        setTimeout(() => articleDiv.classList.add("show"), 100);
-      });
-
-      loadingElement.style.display = "none";
-    })
-    .catch(err => {
-      loadingElement.textContent = "⚠️ Failed to load news.";
-      console.error(err);
-    });
-}
-
-
-// Contact form submission
-document.addEventListener("DOMContentLoaded", function() {
-  const form = document.getElementById("contactForm");
-  const status = document.getElementById("status");
-
-  if (form) {
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-      const formData = new FormData(form);
-
-      fetch("send_message.php", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        status.textContent = data.message;
-        status.style.color = data.success ? "green" : "red";
-        if (data.success) form.reset();
-      })
-      .catch(() => {
-        status.textContent = "⚠️ Server error.";
-        status.style.color = "red";
-      });
-    });
-  }
-});
-function closeWelcome() {
-  document.getElementById('welcomeOverlay').remove();
-  document.querySelector('.dashboard-content').style.opacity = "1";
-}
-
-function myFunction() {
-  document.getElementById("myDropdown").classList.toggle("show");
-}
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    for (var i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-}
-
-const originalMap = new WeakMap();
-
-const slides = document.querySelectorAll('.slide');
-let currentIndex = 0;
-let intervalTime = 5000; 
-let slideInterval;
-
-function showSlide(index) {
-  slides.forEach((slide, i) => {
-    slide.classList.remove('active');
-    if (i === index) slide.classList.add('active');
-  });
-}
-
-// show the first slide
-showSlide(currentIndex);
-
-// function to go to the next slide
-function nextSlide() {
-  currentIndex = (currentIndex + 1) % slides.length;
-  showSlide(currentIndex);
-}
-
-// start automatic slideshow
-slideInterval = setInterval(nextSlide, intervalTime);
-
-
+const escapeHtml = (text) =>
+  String(text ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 const searchInput = document.getElementById("searchInput");
 const searchResults = document.getElementById("searchResults");
 
-searchInput.addEventListener("input", () => {
-  const hasResults = searchResults.children.length > 0;
+function searchPages() {
+  const query = searchInput.value.trim().toLowerCase();
+  searchResults.innerHTML = "";
 
-  if (searchInput.value.trim() !== "" && hasResults) {
-    searchResults.classList.add("active");
-  } else {
+  if (!query) {
     searchResults.classList.remove("active");
+    return;
   }
+
+  const results = PAGES.filter((p) => p.name.toLowerCase().includes(query) || p.hint.toLowerCase().includes(query));
+
+  searchResults.innerHTML = results.length
+    ? results.map((p) => `<a class="result-item" href="${p.url}">${escapeHtml(p.name)}<small>${escapeHtml(p.hint)}</small></a>`).join("")
+    : `<p class="no-results">No pages found</p>`;
+  searchResults.classList.add("active");
+}
+
+if (searchInput) {
+  searchInput.addEventListener("input", searchPages);
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const first = searchResults.querySelector("a");
+      if (first) window.location = first.href;
+    }
+    if (e.key === "Escape") {
+      searchInput.value = "";
+      searchPages();
+    }
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".search")) searchResults.classList.remove("active");
+  });
+}
+
+// ===== LEAGUES DROPDOWN =====
+document.querySelectorAll(".dropdown").forEach((dropdown) => {
+  const button = dropdown.querySelector(".dropbtn");
+  button.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = dropdown.classList.toggle("open");
+    button.setAttribute("aria-expanded", open);
+  });
+});
+document.addEventListener("click", () => {
+  document.querySelectorAll(".dropdown.open").forEach((d) => {
+    d.classList.remove("open");
+    d.querySelector(".dropbtn").setAttribute("aria-expanded", "false");
+  });
 });
 
-/* Hide when clicking outside */
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".search-function")) {
-    searchResults.classList.remove("active");
-  }
+// ===== MOBILE MENU =====
+const menuToggle = document.getElementById("menuToggle");
+if (menuToggle) {
+  menuToggle.addEventListener("click", () => {
+    const open = document.body.classList.toggle("menu-open");
+    menuToggle.setAttribute("aria-expanded", open);
+  });
+}
+
+// ===== WELCOME POPUP =====
+const welcome = document.getElementById("welcome");
+if (welcome) {
+  const close = () => welcome.remove();
+  welcome.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", close));
+  welcome.addEventListener("click", (e) => { if (e.target === welcome) close(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+}
+
+// ===== CONFIRM BEFORE DELETE =====
+document.querySelectorAll("form[data-confirm]").forEach((form) => {
+  form.addEventListener("submit", (e) => {
+    if (!confirm(form.dataset.confirm)) e.preventDefault();
+  });
 });
+
+// ===== NEWS =====
+function timeAgo(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date)) return "";
+  const minutes = Math.round((Date.now() - date) / 60000);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} h ago`;
+  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+// BBC sends small thumbnails – ask for a bigger version
+const biggerImage = (url) => (url ? url.replace(/\/standard\/\d+\//, "/standard/800/") : "");
+
+function newsCard(article, featured) {
+  const img = biggerImage(article.image);
+  return `
+    <a class="news-card${featured ? " featured" : ""}" href="${escapeHtml(article.link)}" target="_blank" rel="noopener">
+      <div class="news-img">
+        ${img ? `<img src="${escapeHtml(img)}" alt="" loading="lazy">` : ""}
+      </div>
+      <div class="news-body">
+        <span class="news-meta">BBC Sport${article.date ? ` · ${timeAgo(article.date)}` : ""}</span>
+        <h3>${escapeHtml(article.title)}</h3>
+        ${article.description ? `<p>${escapeHtml(article.description)}</p>` : ""}
+      </div>
+    </a>`;
+}
+
+function skeletons(count) {
+  return Array.from({ length: count }, () => `
+    <div class="news-card skeleton">
+      <div class="news-img"></div>
+      <div class="news-body"><span></span><span></span><span class="short"></span></div>
+    </div>`).join("");
+}
+
+function fetchNews() {
+  const grid = document.getElementById("newsGrid");
+  if (!grid) return;
+
+  const limit = Number(grid.dataset.limit) || 10;
+  const featured = grid.dataset.featured === "1";
+  if (!grid.children.length) grid.innerHTML = skeletons(Math.min(limit, 6));
+
+  fetch("news1.php")
+    .then((res) => res.json())
+    .then((articles) => {
+      if (!Array.isArray(articles) || articles.length === 0) {
+        grid.innerHTML = `<div class="card empty"><p class="empty-title">No news right now</p><p>Check back in a few minutes.</p></div>`;
+        return;
+      }
+      grid.innerHTML = articles.slice(0, limit).map((a, i) => newsCard(a, featured && i === 0)).join("");
+    })
+    .catch(() => {
+      grid.innerHTML = `<div class="card empty"><p class="empty-title">Couldn't load the news</p><p>Please try again later.</p></div>`;
+    });
+}
+
+const newsGrid = document.getElementById("newsGrid");
+if (newsGrid) {
+  fetchNews();
+  const refresh = Number(newsGrid.dataset.refresh);
+  if (refresh) setInterval(fetchNews, refresh * 1000);
+}
+
+// ===== CONTACT FORM =====
+const contactForm = document.getElementById("contactForm");
+if (contactForm) {
+  const status = document.getElementById("status");
+  const button = contactForm.querySelector("button[type=submit]");
+
+  contactForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!contactForm.checkValidity()) {
+      status.textContent = "Please fill in all fields with a valid email.";
+      status.className = "form-status error";
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Sending…";
+
+    fetch("send_message.php", { method: "POST", body: new FormData(contactForm) })
+      .then((res) => res.json())
+      .then((data) => {
+        status.textContent = data.message;
+        status.className = "form-status " + (data.success ? "success" : "error");
+        if (data.success) contactForm.reset();
+      })
+      .catch(() => {
+        status.textContent = "Server error. Please try again.";
+        status.className = "form-status error";
+      })
+      .finally(() => {
+        button.disabled = false;
+        button.textContent = "Send message";
+      });
+  });
+}

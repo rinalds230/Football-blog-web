@@ -23,20 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Invalid username or password";
     }
 }
-?>
-    <title>Login</title>
-<link rel="stylesheet" href="css/signup-login.css">
-<div class="viss">
-  <div class="container">
-    <h2>Login</h2> <?php if(isset($error)) echo "
-      <p class='error'>$error</p>"; ?> <form method="POST">
-      <input type="text" name="username" placeholder="Username" required>
-      <br>
-      <input type="password" name="password" placeholder="Password" required>
-      <br>
-      <button type="submit" class="button-23">Login</button>
-    </form>
-    <p>Don't have an account? <a href="signup.php">Signup here</a>
-    </p>
-  </div>
-</div>
+
+$mode = 'login';
+require __DIR__ . '/includes/auth_layout.php';

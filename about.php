@@ -1,140 +1,69 @@
 <?php
-session_start();
-if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
-    exit();
-}
+require __DIR__ . '/includes/auth.php';
 
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header("Location: index.php");
-    exit();
-}
+$pageTitle = 'About';
+$activePage = 'about';
+require __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>About</title>
-    <link rel="stylesheet" href="css/about.css">
-</head>
-<body>
-<div class="dashboard-content">
 
-    <div class="viss">
-        <div class="virsraksts">
-            <img src="images/footy.png"  width="130" height="80">
-        </div>
+<section class="page-hero pitch">
+  <div class="container">
+    <p class="kicker"><span class="kicker-dot"></span>About Footy</p>
+    <h1>Made by fans,<br><span class="grad">for fans.</span></h1>
+    <p class="lead">Passionate about football. Footy brings you the latest news, live league tables and everything you need to follow Europe's biggest leagues.</p>
+  </div>
+</section>
 
-        <!-- SEARCH BAR -->
-      <div class="search">
-        <div class="search-function">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search pages..."
-          onkeyup="searchPages()"
-        />
-        <div id="searchResults" class="search-results"></div>
-          </div>
-      </div>
+<section class="container section">
+  <div class="stats-row">
+    <div><strong>5</strong><span>top European leagues</span></div>
+    <div><strong>96</strong><span>clubs followed</span></div>
+    <div><strong>15 min</strong><span>between table updates</span></div>
+    <div><strong>24/7</strong><span>football news</span></div>
+  </div>
+</section>
 
-        <!-- LOGOUT -->
-        <div class="logout">
-            <form method="GET" action="">
-                <button type="submit" name="logout">
-                  <!-- SVG Logout Icon -->
-                    <div class="logout-container">
-                      <svg class="logout-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="50" height="50">
-                        <!-- Circle outline with gradient stroke -->
-                        <defs>
-                          <linearGradient id="grad-light" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#4facfe"/>
-                            <stop offset="100%" stop-color="#00f2fe"/>
-                          </linearGradient>
-                          <linearGradient id="grad-dark" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#6a11cb"/>
-                            <stop offset="100%" stop-color="#2575fc"/>
-                          </linearGradient>
-                        </defs>
-
-                        <!-- Outer circle -->
-                        <circle cx="12" cy="12" r="11" fill="none" stroke="url(#grad-light)" stroke-width="2"/>
-
-                        <!-- Door rectangle -->
-                        <rect x="9" y="8" width="6" height="8" fill="currentColor"/>
-
-                        <!-- Arrow pointing right -->
-                        <path d="M13 12h5m-2-2l2 2-2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
-                    </div>
-    
-                </button>
-            </form>
-        </div>
+<section class="container section">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">What we do</p>
+      <h2>Everything in one place</h2>
     </div>
+  </div>
 
-    <!-- NAVIGATION PAGES -->
-    <div class="pages">
-      <div class="home">
-        <div class="homebutton">
-          <button onclick="document.location='home.php'" class="button-22" role="button">Home</button>
-        </div>
-      </div>
-      <button onclick="document.location='news.php'" class="button-22" role="button">News</button>
-        <div class="top-leagues">
-          <div class="dropdown">
-            <button onclick="toggleDropdown()" class="dropbtn">Top Leagues</button>
-            <div id="myDropdown" class="dropdown-content">
-              <a href="premier.php">Premier league</a>
-              <a href="bundesliga.php">Bundesliga</a>
-              <a href="ligue.php">Ligue 1</a>
-              <a href="seria.php">Serie A</a>
-              <a href="laliga.php">LaLiga</a>
-            </div>
-          </div>
-        </div>
-      <div class="about">
-        <button onclick="document.location='about.php'" class="button-22" role="button">About</button>
-      </div>
-      <div class="contacts">
-        <button onclick="document.location='contacts.php'" class="button-22" role="button">Contacts</button>
-      </div>
+  <div class="feature-grid">
+    <article class="feature">
+      <span class="feature-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h13v14H6a2 2 0 0 1-2-2V5zM17 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5M8 16h3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <h3>Latest news</h3>
+      <p>We deliver the latest football news, match results and transfer updates as they happen.</p>
+    </article>
+    <article class="feature">
+      <span class="feature-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </span>
+      <h3>Tables &amp; stats</h3>
+      <p>Live league standings with points, goal difference, wins, draws and losses for every club in the top five leagues.</p>
+    </article>
+    <article class="feature">
+      <span class="feature-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5l4 2.9-1.5 4.6h-5L8 10.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </span>
+      <h3>Built for fans</h3>
+      <p>One free account gives you all five leagues. Simple, fast and made for people who love the game.</p>
+    </article>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="cta-band pitch">
+    <div>
+      <h2>Have an idea for Footy?</h2>
+      <p>We'd love to hear your suggestions.</p>
     </div>
+    <a class="btn btn-primary" href="contacts.php">Contact us</a>
+  </div>
+</section>
 
-    <!-- PAGE CONTENT -->
-    <header class="hero">
-        <h2>About Us</h2>
-        <p>Passionate about football. Bringing you the latest news, insights, and analysis.</p>
-    </header>
-
-    <section class="what-we-do">
-        <div class="cards">
-            <div class="card">
-                <img src="https://img.icons8.com/fluency/96/000000/news.png" alt="News Icon">
-                <h3>Latest News</h3>
-                <p>We deliver the latest football news, match results, and transfer updates as they happen.</p>
-            </div>
-            <div class="card">
-                <img src="https://img.icons8.com/fluency/96/000000/statistics.png" alt="Stats Icon">
-                <h3>Analysis & Stats</h3>
-                <p>Detailed match analysis and statistics to keep you informed about teams and league standings.</p>
-            </div>
-            <div class="card">
-                <img src="https://img.icons8.com/fluency/96/000000/football2.png" alt="Community Icon">
-                <h3>Community</h3>
-                <p>Engage with fellow football fans, share opinions, and join discussions.</p>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2026 Footy. All rights reserved.</p>
-    </footer>
-
-</div>
-
-<!-- LINK FUNCTIONS.JS -->
-<script src="js/function.js"></script>
-</body>
-</html>
+<?php require __DIR__ . '/includes/footer.php'; ?>

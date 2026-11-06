@@ -1,126 +1,83 @@
 <?php
+require __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/helpers.php';
 
-session_start();
-if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
-    exit();
-}
-
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header("Location: index.php");
-    exit();
-}
+$pageTitle = 'Home';
+$activePage = 'home';
+require __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Home</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/carousel.css">
-</head>
-<body>
-  <div class="dashboard-content">
-    <div class="viss">
-      <div class="virsraksts">
-        <img src="images/footy.png"  width="130" height="80">
-      </div>
-      <div class="search">
-        <div class="search-function">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search pages..."
-          onkeyup="searchPages()"
-        />
-        <div id="searchResults" class="search-results"></div>
-          </div>
-      </div>
-      <div class="logout">
-          <form method="GET" action="">
-             <button type="submit" name="logout">
-                <!-- SVG Logout Icon -->
-                  <div class="logout-container">
-                    <svg class="logout-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="50" height="50">
-                      <!-- Circle outline with gradient stroke -->
-                      <defs>
-                        <linearGradient id="grad-light" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stop-color="#4facfe"/>
-                          <stop offset="100%" stop-color="#00f2fe"/>
-                        </linearGradient>
-                        <linearGradient id="grad-dark" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stop-color="#6a11cb"/>
-                          <stop offset="100%" stop-color="#2575fc"/>
-                        </linearGradient>
-                      </defs>
 
-                      <!-- Outer circle -->
-                      <circle cx="12" cy="12" r="11" fill="none" stroke="url(#grad-light)" stroke-width="2"/>
-
-                      <!-- Door rectangle -->
-                      <rect x="9" y="8" width="6" height="8" fill="currentColor"/>
-
-                      <!-- Arrow pointing right -->
-                      <path d="M13 12h5m-2-2l2 2-2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </div>
-
-              </button>
-          </form>
-      </div>
-    </div>
-
-    <div class="pages">
-      <div class="home">
-        <button onclick="document.location='home.php'" class="button-22" role="button">Home</button>
-      </div>
-      <button onclick="document.location='news.php'" class="button-22" role="button">News</button>
-      <div class="top-leagues">
-        <div class="dropdown">
-          <button onclick="toggleDropdown()" class="dropbtn">Top Leagues</button>
-          <div id="myDropdown" class="dropdown-content">
-            <a href="premier.php">Premier league</a>
-            <a href="bundesliga.php">Bundesliga</a>
-            <a href="ligue.php">Ligue 1</a>
-            <a href="seria.php">Serie A</a>
-            <a href="laliga.php">LaLiga</a>
-          </div>
-        </div>
-      </div>
-      <div class="about">
-      <button onclick="document.location='about.php'" class="button-22" role="button">About</button>
-         </div>
-      <div class="contacts">
-      <button onclick="document.location='contacts.php'" class="button-22" role="button">Contacts</button>
-         </div>
-    </div>
-
-    <div class="carousel">
-      <div class="boxleft">
-        <img src="https://www.shutterstock.com/image-photo/qatar-doha-5-october-2022-600nw-2210319753.jpg" width="370px">
-      </div>
-      <div class="box">
-        <div class="carousel-wrapper" id="carousel-wrapper">
-          <div class="carousel">
-            <a href="premier.php" target="_blank"><div class="slide"><img src="images/premier.png" alt="Pic 1"></div></a>
-            <a href="laliga.php" target="_blank"><div class="slide"><img src="images/laliga.webp" alt="Pic 2"></div></a>
-            <a href="seria.php" target="_blank"><div class="slide"><img src="images/seria.webp" alt="Pic 3"></div></a>
-            <a href="ligue.php" target="_blank"><div class="slide"><img src="images/ligue.jpg" alt="Pic 4"></div></a>
-            <a href="bundesliga.php" target="_blank"><div class="slide"><img src="images/bundesliga.webp" alt="Pic 5"></div></a>
-          </div>
-        </div>
-      </div>
-      <div class="boxright">
-        <img src="https://www.shutterstock.com/image-photo/qatar-doha-5-october-2022-600nw-2210319753.jpg" width="370px">
-      </div>
-    </div>
-    <div class="boxbottom">
-
+<?php if (!empty($showWelcome)): ?>
+  <div class="modal" id="welcome" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+    <div class="modal-card">
+      <button class="modal-close" type="button" data-close aria-label="Close">&times;</button>
+      <?= footy_mark(56) ?>
+      <h2 id="welcomeTitle">Hello, <?= h($user) ?>!</h2>
+      <p>Welcome to Footy. Here you can follow the latest football news and live standings from Europe's top five leagues.</p>
+      <button class="btn btn-primary" type="button" data-close>Let's go</button>
     </div>
   </div>
+<?php endif; ?>
 
-  <!-- LINK ALL JS FILES -->
-  <script src="js/function.js"></script>
-</body>
-</html>
+<section class="home-hero pitch">
+  <div class="container home-hero-inner">
+    <div class="home-hero-text">
+      <p class="kicker"><span class="kicker-dot"></span>Your matchday hub</p>
+      <h1>Welcome back,<br><span class="grad"><?= h($user) ?></span></h1>
+      <p class="lead">The latest headlines and live tables from the Premier League, LaLiga, Serie A, Bundesliga and Ligue 1 – all in one place.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="news.php">Read the news</a>
+        <a class="btn btn-ghost" href="premier.php">View standings</a>
+      </div>
+    </div>
+
+    <div class="scoreboard" aria-label="Footy in numbers">
+      <div class="scoreboard-top">
+        <span class="live"><span class="kicker-dot"></span>Live data</span>
+        <span>Season <?= h(footy_season()) ?></span>
+      </div>
+      <div class="scoreboard-grid">
+        <div><strong>5</strong><span>top leagues</span></div>
+        <div><strong>96</strong><span>clubs</span></div>
+        <div><strong>15'</strong><span>table refresh</span></div>
+        <div><strong>24/7</strong><span>news feed</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Top leagues</p>
+      <h2>Pick a league</h2>
+    </div>
+    <p class="section-sub">See the full table and the latest stories for each league.</p>
+  </div>
+
+  <div class="league-grid">
+    <?php foreach ($LEAGUES as $key => $league): ?>
+      <a class="league-card" href="<?= h($key) ?>.php" style="--c: <?= h($league['color']) ?>">
+        <img src="<?= h($league['img']) ?>" alt="" loading="lazy">
+        <div class="league-card-body">
+          <span class="league-country"><?= h($league['country']) ?></span>
+          <h3><?= h($league['name']) ?></h3>
+          <span class="league-go">Table &amp; news <span>→</span></span>
+        </div>
+      </a>
+    <?php endforeach; ?>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Headlines</p>
+      <h2>Latest football news</h2>
+    </div>
+    <a class="link-arrow" href="news.php">All news <span>→</span></a>
+  </div>
+  <div class="news-grid compact" id="newsGrid" data-limit="4"></div>
+</section>
+
+<?php require __DIR__ . '/includes/footer.php'; ?>

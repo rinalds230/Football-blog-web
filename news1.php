@@ -1,11 +1,10 @@
 <?php
+// Returns the latest BBC football stories as JSON (used by news.php and home.php)
 header('Content-Type: application/json');
 
-$rss_url = "http://feeds.bbci.co.uk/sport/football/rss.xml";
+$xml = @simplexml_load_file("https://feeds.bbci.co.uk/sport/football/rss.xml");
 
-$xml = @simplexml_load_file($rss_url);
-
-if ($xml === FALSE) {
+if ($xml === false) {
     echo json_encode(['status' => 'error', 'message' => 'Failed to fetch news']);
     exit;
 }
@@ -13,20 +12,24 @@ if ($xml === FALSE) {
 $articles = [];
 
 foreach ($xml->channel->item as $item) {
+    $image = null;
     $namespaces = $item->getNamespaces(true);
-    $media = $item->children($namespaces['media']);
-    $image = isset($media->thumbnail) ? (string)$media->thumbnail->attributes()->url : "https://via.placeholder.com/200";
+    if (isset($namespaces['media'])) {
+        $media = $item->children($namespaces['media']);
+        if (isset($media->thumbnail)) {
+            $image = (string) $media->thumbnail->attributes()->url;
+        }
+    }
 
     $articles[] = [
-        'title' => (string)$item->title,
-        'link' => (string)$item->link,
-        'description' => (string)$item->description,
-        'image' => $image
+        'title' => (string) $item->title,
+        'link' => (string) $item->link,
+        'description' => (string) $item->description,
+        'image' => $image,
+        'date' => (string) $item->pubDate,
     ];
 
-    if (count($articles) >= 10) break;
+    if (count($articles) >= 15) break;
 }
 
 echo json_encode($articles);
-exit;
-?>
